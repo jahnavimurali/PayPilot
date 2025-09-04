@@ -11,7 +11,11 @@ export default function LandingPage() {
 
             <div className="container">
                 <header className="d-flex justify-content-between align-items-center py-4">
-                    <div className="pp-logo">Pay<span>Pilot</span></div>
+
+                    <div className="pp-logo">
+                        <span className="pp-pay">Pay<span className="pp-pilot">Pilot</span></span>
+                    </div>
+
                     <div className="d-none d-md-flex gap-3">
                         <Link to="/login" className="pp-link">Log In</Link>
                         <Link to="/signup" className="pp-link">Sign Up</Link>

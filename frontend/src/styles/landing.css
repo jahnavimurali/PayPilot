@@ -21,14 +21,32 @@
 .pp-bubble.b3{ width:220px; height:220px; right:20%; bottom:-80px; background:#ffecc7; animation-delay:2s; }
 @keyframes float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-16px)} }
 
-.pp-logo{
-    font-weight:800;
-    font-size:28px;
-    letter-spacing:.5px;
-    color:#ff3b6e;
-    text-shadow:0 2px 10px rgba(255,59,110,.15);
+/* Make both words share the same typography, and kill any gap */
+.pp-logo {
+    display: inline-flex;          /* whitespace between children is ignored */
+    align-items: baseline;
+    gap: 0;                        /* ensure no space at all */
+    font-weight: 800 !important;
+    font-size: 28px !important;    /* bump if you want it larger */
+    letter-spacing: 0.5px;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(255,59,110,.15);
+    padding-left: 10px;
 }
-.pp-logo span{ color:#ff7f50; }
+
+.pp-logo .pp-pay,
+.pp-logo .pp-pilot {
+    font: inherit;                 /* inherit size + weight + family */
+    letter-spacing: inherit;
+    text-shadow: inherit;
+}
+
+.pp-logo .pp-pay   { color: #ff3b6e; } /* pink */
+.pp-logo .pp-pilot { color: #ff7f50; } /* orange */
+
+
+
+
 
 .pp-card{
     backdrop-filter: blur(10px);
