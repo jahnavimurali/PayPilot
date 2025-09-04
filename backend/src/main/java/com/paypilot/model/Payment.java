@@ -1,6 +1,8 @@
 package com.paypilot.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -20,7 +22,7 @@ public class Payment {
     private String method;
 
     @Temporal(TemporalType.DATE)
-    private Date scheduledDate;
+    private LocalDate scheduledDate;
 
     public Long getId() {
         return id;
@@ -62,11 +64,11 @@ public class Payment {
         this.method = method;
     }
 
-    public Date getScheduledDate() {
+    public LocalDate getScheduledDate() {
         return scheduledDate;
     }
 
-    public void setScheduledDate(Date scheduledDate) {
+    public void setScheduledDate(LocalDate scheduledDate) {
         this.scheduledDate = scheduledDate;
     }
 

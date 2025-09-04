@@ -199,7 +199,7 @@ public class PdfGeneratorService {
         table.addCell(getValueCell(bill.getTitle(), normalFont));
 
         table.addCell(getColoredCell("Category", headerFont, accentColor));
-        table.addCell(getValueCell(bill.getCategory(), normalFont));
+        table.addCell(getValueCell(String.valueOf(bill.getCategory()), normalFont));
 
         table.addCell(getColoredCell("Amount", headerFont, accentColor));
         table.addCell(getValueCell("₹" + bill.getAmount(), normalFont));

@@ -57,5 +57,15 @@ public class ScheduledPaymentController {
         scheduledPaymentService.deletePayment(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("markPaid/{id}")
+    public ResponseEntity<?> markScheduledPaymentAsPaid(@PathVariable Long id){
+        try {
+            scheduledPaymentService.setScheduledPaymentStatusPaid(id);
+            return ResponseEntity.ok("Scheduled Payment has been Paid");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("An error Occurred !");
+        }
+    }
 }
 

@@ -97,12 +97,13 @@
             <version>5.5.13.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version> <!-- Use latest available -->
+        </dependency>
 
-        <!--        <dependency>-->
-<!--            <groupId>com.twilio.sdk</groupId>-->
-<!--            <artifactId>twilio</artifactId>-->
-<!--            <version>9.17.0</version>-->
-<!--        </dependency>-->
+
 
 
 

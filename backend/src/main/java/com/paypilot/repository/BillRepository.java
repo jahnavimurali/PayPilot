@@ -27,4 +27,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             "AND b.dueDate BETWEEN :startDate AND :endDate")
     List<Bill> findByUserIdAndCategoryAndDueDateBetween(Long userId, String category, LocalDate startDate, LocalDate endDate);
 
+
+
+
 }

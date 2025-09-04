@@ -2,7 +2,9 @@ package com.paypilot.controller;
 
 import com.paypilot.model.Bill;
 import com.paypilot.service.BillService;
+import com.paypilot.service.PaymentService;
 import com.paypilot.service.PdfGeneratorService;
+import com.paypilot.service.ScheduledPaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +31,18 @@ public class BillController {
     @Autowired
     private PdfGeneratorService pdfGeneratorService;
 
+    @Autowired
+    private ScheduledPaymentService scheduledPaymentService;
+
     @PostMapping
-    public ResponseEntity<Bill> addBill(@RequestBody Bill bill) {
-        return ResponseEntity.ok(billService.addBill(bill));
+    public ResponseEntity<?> addBill(@RequestBody Bill bill) {
+        billService.addBill(bill);
+        try {
+            scheduledPaymentService.createScheduledPaymentFromBill(bill);
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok("Bill Added Successfully");
+        }
+        return ResponseEntity.ok("Bill added successfully");
     }
 
     @GetMapping
@@ -82,6 +93,16 @@ public class BillController {
             System.out.println("Unable to fetch request!");
 //            e.printStackTrace();
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateBill(@RequestBody Bill bill){
+        try{
+            billService.updateBill(bill);
+            return ResponseEntity.ok("Bill Details Updated Successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Bill Details Not Updated :" + e.getMessage());
         }
     }
 

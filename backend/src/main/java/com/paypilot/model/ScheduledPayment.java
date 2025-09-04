@@ -9,21 +9,38 @@ public class ScheduledPayment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Long id;
 
-    @Column(name="user_id")
     private Long userId;
-    @Column(name="bill_id")
     private Long billId;
-    @Column(name="amount")
     private Double amount;
     @Column(name = "payment_date")
     private LocalDate scheduledDate;
-    @Column(name="payment_method")
-    private String paymentMethod;
+    private String paymentMethod = String.valueOf(PaymentMethod.UPI);
+    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
+    @Convert(converter = BooleanToYNConverter.class)
+    private Boolean isPaid = false;
 
-    //  Getters and Setters
+    public ScheduledPayment(){
+
+    }
+    public ScheduledPayment(Long userId, Long billId, Double amount, LocalDate scheduledDate, String paymentMethod) {
+        this.userId = userId;
+        this.billId = billId;
+        this.amount = amount;
+        this.scheduledDate = scheduledDate;
+        this.paymentMethod = paymentMethod;
+        this.isPaid = false;
+    }
+
+    public Boolean getIsPaid(){
+        return isPaid;
+    }
+
+    public void setIsPaid(Boolean status){
+        this.isPaid = status;
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,4 +88,5 @@ public class ScheduledPayment {
     public void setPaymentMethod(String paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
 }
