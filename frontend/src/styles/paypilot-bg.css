@@ -1,32 +1,32 @@
 html, body, #root { height: 100%; }
 body {
-  margin: 0;
-  --pp-pink: #ffe6f0;
-  --pp-blue: #e7f3ff;
-  --pp-warm: #ffecc7;
+    margin: 0;
+    --pp-pink: #ffe6f0;
+    --pp-blue: #e7f3ff;
+    --pp-warm: #ffecc7;
 
-  background:
-    radial-gradient(1200px 700px at 10% 10%, var(--pp-pink) 0%, transparent 60%),
-    radial-gradient(1000px 600px at 90% 0%,  var(--pp-blue) 0%, transparent 55%),
-    radial-gradient(700px 400px  at 70% 100%, var(--pp-warm) 0%, transparent 60%),
-    linear-gradient(180deg, #fafbff, #f7f7ff);
-  background-attachment: fixed; 
+    background:
+            radial-gradient(1200px 700px at 10% 10%, var(--pp-pink) 0%, transparent 60%),
+            radial-gradient(1000px 600px at 90% 0%,  var(--pp-blue) 0%, transparent 55%),
+            radial-gradient(700px 400px  at 70% 100%, var(--pp-warm) 0%, transparent 60%),
+            linear-gradient(180deg, #fafbff, #f7f7ff);
+    background-attachment: fixed;
 }
 
 #root::before, #root::after {
-  content: "";
-  position: fixed;
-  z-index: -1;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: .45;
-  pointer-events: none;
-  animation: pp-float 9s ease-in-out infinite;
+    content: "";
+    position: fixed;
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: .45;
+    pointer-events: none;
+    animation: pp-float 9s ease-in-out infinite;
 }
 #root::before { width: 240px; height: 240px; left: -60px; top: 120px; background: #ffd5e4; }
 #root::after  { width: 300px; height: 300px; right: -80px; top: 40px;  background: #d8ebff; animation-delay: 1.2s; }
 
 @keyframes pp-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-16px); }
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-16px); }
 }

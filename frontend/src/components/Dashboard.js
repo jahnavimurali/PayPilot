@@ -7,8 +7,7 @@ import PaymentManager from "./PaymentManager";
 import ScheduledPaymentManager from "./ScheduledPaymentManager";
 import ReminderSettings from "./ReminderSettings";
 import NotificationPopup from "./NotificationPopup";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 
 const Dashboard = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -42,7 +41,6 @@ const Dashboard = () => {
                             textShadow: '2px 2px #ffeb3b'
                         }}
                     >
-                        
                         PayPilot
                     </a>
                     <button

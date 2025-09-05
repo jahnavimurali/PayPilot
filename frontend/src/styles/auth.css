@@ -1,18 +1,18 @@
 .pp-auth-wrap{
-  min-height:100vh;
-  display:flex; align-items:center; justify-content:center;
-  padding:48px 16px;
+    min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:48px 16px;
 }
 
 .pp-auth-card{
-  max-width:520px; width:100%;
-  border-radius:20px;
-  padding:40px 32px;
-  margin:auto;
+    max-width:520px; width:100%;
+    border-radius:20px;
+    padding:40px 32px;
+    margin:auto;
 }
 
 .pp-auth-logo{
-  font-weight:800; font-size:28px; color:#ff3b6e; letter-spacing:.5px;
+    font-weight:800; font-size:28px; color:#ff3b6e; letter-spacing:.5px;
 }
 .pp-auth-logo span{ color:#ff7f50; }
 
@@ -22,35 +22,35 @@
 .pp-form-grid{ display:grid; gap:14px; }
 .pp-field label{ font-size:.95rem; color:#4b5563; margin-bottom:6px; }
 .pp-input{
-  border:1px solid #e6eaf5; border-radius:12px; padding:.9rem .95rem;
-  background:#fff; outline:none; width:100%;
-  transition:border-color .15s ease, box-shadow .15s ease;
+    border:1px solid #e6eaf5; border-radius:12px; padding:.9rem .95rem;
+    background:#fff; outline:none; width:100%;
+    transition:border-color .15s ease, box-shadow .15s ease;
 }
 .pp-input:focus{
-  border-color:#b4c6ff;
-  box-shadow:0 0 0 4px rgba(106,167,255,.15);
+    border-color:#b4c6ff;
+    box-shadow:0 0 0 4px rgba(106,167,255,.15);
 }
 
 .pp-btn{ display:inline-flex; align-items:center; justify-content:center;
-  padding:.9rem 1.2rem; border-radius:12px; font-weight:700; cursor:pointer;
-  border:1px solid transparent; text-decoration:none;
-  transition:transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    padding:.9rem 1.2rem; border-radius:12px; font-weight:700; cursor:pointer;
+    border:1px solid transparent; text-decoration:none;
+    transition:transform .15s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
 }
 .pp-btn--block{ width:100%; }
 .pp-btn--primary{
-  background:linear-gradient(135deg,#ff3b6e,#ff7f50); color:#fff !important;
-  box-shadow:0 10px 24px rgba(255,59,110,.25);
+    background:linear-gradient(135deg,#ff3b6e,#ff7f50); color:#fff !important;
+    box-shadow:0 10px 24px rgba(255,59,110,.25);
 }
 .pp-btn--primary:hover{ transform:translateY(-2px) scale(1.02); box-shadow:0 14px 30px rgba(255,59,110,.35); }
 .pp-btn--primary:active{ transform:translateY(0) scale(.99); }
 
 .pp-btn--outline{
-  background:transparent; border:2px solid #ff3b6e; color:#ff3b6e !important;
-  box-shadow:0 6px 14px rgba(255,59,110,.10);
+    background:transparent; border:2px solid #ff3b6e; color:#ff3b6e !important;
+    box-shadow:0 6px 14px rgba(255,59,110,.10);
 }
 .pp-btn--outline:hover{
-  background:#fff0f4; color:#ff315f !important; border-color:#ff315f;
-  transform:translateY(-2px) scale(1.02); box-shadow:0 10px 24px rgba(255,59,110,.18);
+    background:#fff0f4; color:#ff315f !important; border-color:#ff315f;
+    transform:translateY(-2px) scale(1.02); box-shadow:0 10px 24px rgba(255,59,110,.18);
 }
 
 .pp-sep{ display:flex; align-items:center; gap:10px; margin:8px 0; color:#9aa3b2; }
@@ -63,20 +63,20 @@
 .pp-topback{ position:absolute; left:16px; top:16px; }
 
 .pp-btn--ghost{
-  background: linear-gradient(135deg,
-              rgba(255,59,110,.12),
-              rgba(255,127,80,.10));
-  border: 1.5px solid rgba(255,59,110,.35);
-  color: #ff3b6e !important;
-  box-shadow: 0 6px 14px rgba(255,59,110,.12);
+    background: linear-gradient(135deg,
+    rgba(255,59,110,.12),
+    rgba(255,127,80,.10));
+    border: 1.5px solid rgba(255,59,110,.35);
+    color: #ff3b6e !important;
+    box-shadow: 0 6px 14px rgba(255,59,110,.12);
 }
 .pp-btn--ghost:hover{
-  background: linear-gradient(135deg,
-              rgba(255,59,110,.18),
-              rgba(255,127,80,.16));
-  border-color: #ff315f;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(255,59,110,.18);
+    background: linear-gradient(135deg,
+    rgba(255,59,110,.18),
+    rgba(255,127,80,.16));
+    border-color: #ff315f;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(255,59,110,.18);
 }
 .pp-btn--sm{ padding:.55rem .9rem; font-size:.95rem; border-radius:10px; }
 

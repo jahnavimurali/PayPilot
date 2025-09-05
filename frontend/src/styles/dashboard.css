@@ -1,0 +1,96 @@
+body {
+    background: #f9fafb;
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    color: #111827;
+}
+
+/* Navbar */
+.navbar {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 14px 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.navbar-brand {
+    font-size: 1.6rem !important;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: inline;  /* inline so they sit together */
+    margin: 0;
+    padding: 0;
+}
+
+.pay {
+    color: #ff3b6e !important;
+}
+
+.pilot {
+    color: #ff7f50 !important;
+}
+
+
+/* Nav items */
+.navbar-nav .btn-link {
+    color: #4b5563 !important;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.25s ease-in-out;
+}
+
+.navbar-nav .btn-link:hover {
+    background: #f3f4f6;
+    color: #111 !important;
+}
+
+.navbar-nav .btn-link.active {
+    background: #2563eb;
+    color: #fff !important;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(37,99,235,0.4);
+}
+
+/* Welcome + Logout */
+.d-flex span {
+    font-size: 0.95rem;
+    color: #374151;
+    margin-right: 14px;
+    font-weight: 500;
+}
+
+.btn-outline-danger {
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-outline-danger:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+}
+
+/* Dashboard Content */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 32px;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.container:hover {
+    box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+}
+
+/* Headings inside content */
+.container h2 {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
