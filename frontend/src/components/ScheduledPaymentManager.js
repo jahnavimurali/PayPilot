@@ -201,7 +201,7 @@ const ScheduledPaymentManager = () => {
                         className="form-control"
                         value={formData.amount}
                         onChange={handleChange}
-                        required
+                        readOnly
                     />
                 </div>
 

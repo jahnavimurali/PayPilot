@@ -99,7 +99,7 @@ const ViewBills = () => {
                         <th>Title</th>
                         <th>Category</th>
                         <th>Amount</th>
-                        <th>Due Date</th>
+                        <th>Date</th>
                         <th>Status</th>
                         <th>Payment</th>
                         <th>Actions</th>

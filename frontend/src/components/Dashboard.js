@@ -7,6 +7,8 @@ import PaymentManager from "./PaymentManager";
 import ScheduledPaymentManager from "./ScheduledPaymentManager";
 import ReminderSettings from "./ReminderSettings";
 import NotificationPopup from "./NotificationPopup";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 
 const Dashboard = () => {
