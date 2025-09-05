@@ -64,7 +64,7 @@ public class Bill {
         this.snoozeReminders = snoozeReminders;
         this.autoPayEnabled = autoPayEnabled;
         this.paymentMethod = paymentMethod;
-        this.setNextDueDate = dueDate;
+        this.nextDueDate = dueDate;
     }
 
     // getters & setters...

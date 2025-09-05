@@ -170,6 +170,7 @@ const AddBill = () => {
                     <label className="form-check-label">Enable Auto-Pay ?</label>
                 </div>
 
+				{/* 
                 {billData.autoPayEnabled && (
                     <div className="mb-3 form-check">
                         <input
@@ -200,6 +201,7 @@ const AddBill = () => {
                         </select>
                     </div>
                 )}
+				*/}
 
                 <button type="submit" className="btn btn-success">
                     ➕ Add Bill
