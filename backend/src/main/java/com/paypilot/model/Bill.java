@@ -64,6 +64,7 @@ public class Bill {
         this.snoozeReminders = snoozeReminders;
         this.autoPayEnabled = autoPayEnabled;
         this.paymentMethod = paymentMethod;
+        this.setNextDueDate = dueDate;
     }
 
     // getters & setters...
@@ -136,7 +137,7 @@ public class Bill {
     }
 
 
-    public void setRecurring(boolean recurring) {
+    public void setRecurring(Boolean recurring) {
         isRecurring = recurring;
     }
 
@@ -152,15 +153,15 @@ public class Bill {
         return isPaid;
     }
 
-    public void setPaid(boolean paid) {
-        isPaid = paid;
+    public void setPaid(Boolean paid) {
+        this.isPaid = paid;
     }
 
     public Boolean isSnoozeReminders() {
         return snoozeReminders;
     }
 
-    public void setSnoozeReminders(boolean snoozeReminders) {
+    public void setSnoozeReminders(Boolean snoozeReminders) {
         this.snoozeReminders = snoozeReminders;
     }
 
