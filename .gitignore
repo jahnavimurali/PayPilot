@@ -93,7 +93,6 @@ modules.xml
 
 backend/target
 backend/pom.xml
-backend/src/main/resources/application.properties
 frontend/node_modules
 .env
 
