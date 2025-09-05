@@ -68,11 +68,17 @@ const ScheduledPaymentManager = () => {
 
     // Bills that are NOT fully paid (no paid scheduled payment for that bill)
     const unpaidBills = useMemo(() => {
-        const paidSet = new Set(
-            (scheduledPayments || [])
-                .filter((sp) => sp.isPaid)
-                .map((sp) => sp.billId)
-        );
+		{/*
+			const paidSet = new Set(
+			            (scheduledPayments || [])
+			                .filter((sp) => sp.isPaid)
+			                .map((sp) => sp.billId)
+			        );
+		*/}
+		const paidSet = new Set(
+		            (scheduledPayments || []).map((sp) => sp.billId)
+		        );
+		console.log("\n\nUNpaid Bills to be displayed: - \n\n"+paidSet.values());
         return (bills || []).filter((b) => !paidSet.has(b.id));
     }, [bills, scheduledPayments]);
 
