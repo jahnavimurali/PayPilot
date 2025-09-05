@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , userRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ console.log(siteKey)
 
 const Login = () => {
     const navigate = useNavigate();
+    const recaptchaRef = useRef(null);
 
     const [loginData, setLoginData] = useState({
         email: "",
@@ -33,7 +34,7 @@ const Login = () => {
         e.preventDefault();
         try {
             if (!loginData.captcha) {
-                alert("Please verify the captcha!");
+                toast.error("Please verify the captcha!");
                 return;
             }
 
@@ -44,7 +45,13 @@ const Login = () => {
             navigate("/dashboard");
         } catch (err) {
             console.error("Login failed:", err);
-            toast.error("Login failed: " + (err.response?.data || err.message));
+            toast.error((err.response?.data || err.message));
+
+            if (recaptchaRef.current) {
+                recaptchaRef.current.reset();
+            }
+
+            setLoginData((prev) => ({ ...prev, captcha: "" }));
         }
     };
 
@@ -91,6 +98,7 @@ const Login = () => {
                     <ReCAPTCHA
                         sitekey={siteKey}
                         onChange={handleCaptchaChange}
+                        ref={recaptchaRef} 
                     />
                     <button type="submit" className="pp-btn pp-btn--primary pp-btn--block">
                         Log In

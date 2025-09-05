@@ -106,8 +106,9 @@ const AddBill = () => {
                         value={billData.category}
                         onChange={handleChange}
                         name="category"
+                        required
                     >
-                        <option className="form-control">--Please choose an option--</option>
+                        <option className="form-control" value="">--Please choose an option--</option>
                         {categories.map((category) => (
                             <option className="form-control" key={category} value={category}>
                                 {category}

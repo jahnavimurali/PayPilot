@@ -98,6 +98,7 @@ const FilterBills = () => {
             <h3>Filter Bills</h3>
             <div className="row mb-3">
                 <div className="col-md-4">
+                    <label>Bill Category</label>
                     <input
                         type="text"
                         placeholder="e.g. Rent, Groceries, Internet"
@@ -107,6 +108,7 @@ const FilterBills = () => {
                     />
                 </div>
                 <div className="col-md-3">
+                    <label>From</label>
                     <input
                         type="date"
                         className="form-control"
@@ -115,6 +117,7 @@ const FilterBills = () => {
                     />
                 </div>
                 <div className="col-md-3">
+                    <label>To</label>
                     <input
                         type="date"
                         className="form-control"

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { ConfirmToast } from "./ConfirmToast";
+import { toast } from "react-toastify"; 
 
 const ScheduledPaymentManager = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -99,11 +101,13 @@ const ScheduledPaymentManager = () => {
                     `http://localhost:9090/api/scheduled-payments/${formData.id}`,
                     { ...formData, userId: user.id }
                 );
+                toast.success("Payment updated successfully!");
             } else {
                 await axios.post("http://localhost:9090/api/scheduled-payments", {
                     ...formData,
                     userId: user.id,
                 });
+                toast.success("Payment scheduled!");
             }
             await fetchScheduledPayments();
             resetForm();
@@ -123,27 +127,45 @@ const ScheduledPaymentManager = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this payment?")) return;
+        ConfirmToast(
+        "Are you sure you want to delete this item?",
+        async() => {
         try {
             await axios.delete(`http://localhost:9090/api/scheduled-payments/${id}`);
             await fetchScheduledPayments();
         } catch (err) {
             console.error("Error deleting payment:", err);
         }
+        console.log("Item deleted");
+        toast.success("Item deleted!");
+        },
+        () => {
+        console.log("Delete canceled");
+        toast.info("Action canceled");
+        }
+    );
     };
 
     const handleMarkAsPaid = async (id) => {
-        if (!window.confirm("Are you sure you want to mark this payment as paid?")) {
-            return;
-        }
+        ConfirmToast(
+        "Are you sure you want to mark this payment as paid?",
+        async() => {
         try {
-            await axios.put(
-                `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
-            );
-            await fetchScheduledPayments();
+        await axios.put(
+            `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
+        );
+        await fetchScheduledPayments();
         } catch (err) {
-            console.error("Error marking payment as paid:", err);
+        console.error("Error marking payment as paid:", err);
         }
+        console.log("Marked as paid");
+        toast.success("Marked as paid!");
+        },
+        () => {
+        console.log("Marked as paid canceled");
+        toast.info("Action canceled");
+        }
+    );
     };
 
     const handlePay = async (id) => {
