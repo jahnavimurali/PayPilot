@@ -106,5 +106,16 @@ public class BillController {
         }
     }
 
+    @DeleteMapping("/delete/{billId}")
+    public ResponseEntity<?> deleteBillById(@PathVariable Long billId) {
+        try{
+            Bill bill = billService.getBillById(billId);
+            billService.deleteBill(bill);
+            return ResponseEntity.ok("Bill deleted successfully");
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("Bill Details Not Deleted :" + e.getMessage());
+        }
+    }
+
 
 }

@@ -1,7 +1,10 @@
 package com.paypilot.service;
 
 import com.paypilot.model.Payment;
+import com.paypilot.model.ScheduledPayment;
 import com.paypilot.repository.PaymentRepository;
+import com.paypilot.repository.ScheduledPaymentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,8 +18,24 @@ public class PaymentService {
         this.repo = repo;
     }
 
+    @Autowired
+    private ScheduledPaymentRepository scheduledPaymentRepository;
+
     public Payment addPayment(Payment payment) {
-        return repo.save(payment);
+        Payment saved = repo.save(payment);
+
+        // Mark related scheduled payments as paid
+        List<ScheduledPayment> scheduledPayments = scheduledPaymentRepository
+                .findByUserId(payment.getUserId()).stream()
+                .filter(sp -> sp.getBillId().equals(payment.getBillId()))
+                .toList(); // or use collect(Collectors.toList()) for Java 8
+
+        for (ScheduledPayment sp : scheduledPayments) {
+            sp.setIsPaid(true);
+            scheduledPaymentRepository.save(sp);
+        }
+
+        return saved;
     }
 
     public List<Payment> getAllPayments() {

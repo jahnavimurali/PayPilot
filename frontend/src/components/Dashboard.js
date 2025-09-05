@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
-import "../styles/dashboard.css";
-import { FiPlus, FiFileText, FiFilter, FiCreditCard, FiCalendar, FiBell } from "react-icons/fi";
-
 import AddBill from "./AddBill";
 import ViewBills from "./ViewBills";
 import FilterBills from "./FilterBills";
@@ -10,6 +7,7 @@ import PaymentManager from "./PaymentManager";
 import ScheduledPaymentManager from "./ScheduledPaymentManager";
 import ReminderSettings from "./ReminderSettings";
 import NotificationPopup from "./NotificationPopup";
+
 
 const Dashboard = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -33,10 +31,18 @@ const Dashboard = () => {
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                <span className="navbar-brand">
-                  <span className="pay">Pay</span><span className="pilot">Pilot</span>
-                </span>
-
+                    <a
+                        className="navbar-brand"
+                        href="#"
+                        style={{
+                            color: '#ff4081',
+                            fontWeight: 'bold',
+                            fontSize: '1.75rem',
+                            textShadow: '2px 2px #ffeb3b'
+                        }}
+                    >
+                        PayPilot
+                    </a>
                     <button
                         className="navbar-toggler"
                         type="button"
@@ -55,7 +61,7 @@ const Dashboard = () => {
                                     className={`nav-link btn btn-link ${activeView === "add" ? "active" : ""}`}
                                     onClick={() => setActiveView("add")}
                                 >
-                                    <FiPlus /> Add Bill
+                                    ➕ Add Bill
                                 </button>
                             </li>
                             <li className="nav-item">
@@ -63,7 +69,7 @@ const Dashboard = () => {
                                     className={`nav-link btn btn-link ${activeView === "view" ? "active" : ""}`}
                                     onClick={() => setActiveView("view")}
                                 >
-                                    <FiFileText /> View Bills
+                                    📄 View Bills
                                 </button>
                             </li>
                             <li className="nav-item">
@@ -71,7 +77,7 @@ const Dashboard = () => {
                                     className={`nav-link btn btn-link ${activeView === "filter" ? "active" : ""}`}
                                     onClick={() => setActiveView("filter")}
                                 >
-                                    <FiFilter /> Filter Bills
+                                    🔍 Filter Bills
                                 </button>
                             </li>
                             <li className="nav-item">
@@ -79,7 +85,7 @@ const Dashboard = () => {
                                     className={`nav-link btn btn-link ${activeView === "payments" ? "active" : ""}`}
                                     onClick={() => setActiveView("payments")}
                                 >
-                                    <FiCreditCard /> Payments
+                                    💳 Payments
                                 </button>
                             </li>
                             <li className="nav-item">
@@ -87,7 +93,7 @@ const Dashboard = () => {
                                     className={`nav-link btn btn-link ${activeView === "scheduled" ? "active" : ""}`}
                                     onClick={() => setActiveView("scheduled")}
                                 >
-                                    <FiCalendar/> Scheduled
+                                    📅 Scheduled
                                 </button>
                             </li>
                             <li className="nav-item">
@@ -95,7 +101,7 @@ const Dashboard = () => {
                                     className={`nav-link btn btn-link ${activeView === "reminders" ? "active" : ""}`}
                                     onClick={() => setActiveView("reminders")}
                                 >
-                                    <FiBell /> Reminders
+                                    ⏰ Reminders
                                 </button>
                             </li>
                         </ul>

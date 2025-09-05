@@ -1,5 +1,6 @@
 package com.paypilot.model;
 
+import com.paypilot.util.BooleanToYNConverter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 

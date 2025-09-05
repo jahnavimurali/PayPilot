@@ -1,4 +1,4 @@
-package com.paypilot.model;
+package com.paypilot.util;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

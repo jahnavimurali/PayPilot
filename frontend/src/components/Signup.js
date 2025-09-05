@@ -37,7 +37,7 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if(passwordMismatch===false || passwordMismatch===null){
-            toast.error("Password Does not match");
+            toast.error("Password does not match");
             return;
         }
         if (loading) return;

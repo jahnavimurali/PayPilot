@@ -4,20 +4,27 @@ import axios from "axios";
 const PaymentManager = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const [payments, setPayments] = useState([]);
-    const [bills, setBills] = useState([]);
-    const [paymentMethods, setPaymentMethods] = useState([]); // ✅ fetch from API
+
+    // ✅ keep ALL bills for title lookup
+    const [allBills, setAllBills] = useState([]);
+
+    // ✅ keep ONLY unpaid bills for the Pay dropdown
+    const [unpaidBills, setUnpaidBills] = useState([]);
+
+    const [paymentMethods, setPaymentMethods] = useState([]);
     const [formData, setFormData] = useState({
         billId: "",
         amount: "",
-        method: "UPI", // ✅ default UPI
+        method: "UPI",
         scheduledDate: "",
     });
     const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
         fetchPayments();
-        fetchBills();
+        fetchBills();          // fills allBills + unpaidBills
         fetchPaymentMethods();
+        // eslint-disable-next-line
     }, []);
 
     const fetchPayments = async () => {
@@ -25,7 +32,7 @@ const PaymentManager = () => {
             const res = await axios.get(
                 `http://localhost:9090/api/payments/user/${user.id}`
             );
-            setPayments(res.data);
+            setPayments(res.data || []);
         } catch (err) {
             console.error("Error fetching payments:", err);
         }
@@ -33,9 +40,44 @@ const PaymentManager = () => {
 
     const fetchBills = async () => {
         try {
-            const res = await axios.get(`http://localhost:9090/api/bills`);
-            const userBills = res.data.filter((b) => b.userId === user.id);
-            setBills(userBills);
+            // 1) all bills for this user
+            const billsRes = await axios.get(`http://localhost:9090/api/bills/${user.id}`);
+            const all = billsRes.data || [];
+
+            // 2) scheduled payments to know which bills are paid by schedule
+            const schedRes = await axios.get(
+                `http://localhost:9090/api/scheduled-payments/user/${user.id}`
+            );
+            const scheduledPayments = schedRes.data || [];
+
+            // 3) direct payments to know which bills have been paid via Payment
+            const payRes = await axios.get(
+                `http://localhost:9090/api/payments/user/${user.id}`
+            );
+            const directPayments = payRes.data || [];
+
+            // Build a set of billIds considered "paid"
+            const paidBillIds = new Set();
+
+            // a) Scheduled payments marked paid
+            for (const sp of scheduledPayments) {
+                if (sp.billId != null && Boolean(sp.isPaid)) {
+                    paidBillIds.add(sp.billId);
+                }
+            }
+
+            // b) Any direct payment records for that bill
+            for (const p of directPayments) {
+                if (p.billId != null) {
+                    paidBillIds.add(p.billId);
+                }
+            }
+
+            // 4) Unpaid = not in the paid set
+            const onlyUnpaid = all.filter((b) => !paidBillIds.has(b.id));
+
+            setAllBills(all);          // used for table title lookup
+            setUnpaidBills(onlyUnpaid); // dropdown shows only unpaid
         } catch (err) {
             console.error("Error fetching bills:", err);
         }
@@ -44,8 +86,7 @@ const PaymentManager = () => {
     const fetchPaymentMethods = async () => {
         try {
             const res = await axios.get("http://localhost:9090/api/payment_methods");
-            // 🚫 filter out CASH
-            setPaymentMethods(res.data.filter((m) => m !== "CASH"));
+            setPaymentMethods((res.data || []).filter((m) => m !== "CASH"));
         } catch (err) {
             console.error("Error fetching payment methods:", err);
         }
@@ -56,18 +97,17 @@ const PaymentManager = () => {
     };
 
     const handleBillSelect = (billId) => {
-        const selectedBill = bills.find((b) => b.id === parseInt(billId));
+        const selectedBill = unpaidBills.find((b) => b.id === Number(billId));
         if (!selectedBill) return;
-
-        setFormData({
-            ...formData,
-            billId: billId,
+        setFormData((prev) => ({
+            ...prev,
+            billId,
             amount: selectedBill.amount,
             scheduledDate: selectedBill.dueDate,
-        });
+        }));
     };
 
-    const handleAddOrUpdate = async (e) => {
+    const handlePay = async (e) => {
         e.preventDefault();
         try {
             if (editingId) {
@@ -81,10 +121,10 @@ const PaymentManager = () => {
                     ...formData,
                     userId: user.id,
                 });
-                alert("✅ Payment added!");
+                alert("✅ Payment successful!");
             }
-
-            fetchPayments();
+            await fetchPayments();
+            await fetchBills(); // refresh unpaid list so paid bill disappears
             setFormData({ billId: "", amount: "", method: "UPI", scheduledDate: "" });
             setEditingId(null);
         } catch (err) {
@@ -107,7 +147,7 @@ const PaymentManager = () => {
         if (!window.confirm("Delete this payment?")) return;
         try {
             await axios.delete(`http://localhost:9090/api/payments/${id}`);
-            fetchPayments();
+            await fetchPayments();
         } catch (err) {
             console.error("Delete failed", err);
         }
@@ -115,8 +155,8 @@ const PaymentManager = () => {
 
     return (
         <div className="container mt-4">
-            <h3>{editingId ? "Update Payment" : "Add Payment"}</h3>
-            <form onSubmit={handleAddOrUpdate}>
+            <h3>{editingId ? "Update Payment" : "Pay Bill"}</h3>
+            <form onSubmit={handlePay}>
                 <div className="mb-2">
                     <label>Bill</label>
                     <select
@@ -126,14 +166,8 @@ const PaymentManager = () => {
                         onChange={(e) => handleBillSelect(e.target.value)}
                         required
                     >
-                        <option value="">-- Select a bill --</option>
-                        {!bills.find((b) => b.id === parseInt(formData.billId)) &&
-                            formData.billId && (
-                                <option value={formData.billId}>
-                                    Unknown Bill #{formData.billId}
-                                </option>
-                            )}
-                        {bills.map((bill) => {
+                        <option value="">Select Unpaid Bill</option>
+                        {unpaidBills.map((bill) => {
                             const recurringFlag = bill.isRecurring ?? bill.recurring;
                             return (
                                 <option key={bill.id} value={bill.id}>
@@ -186,9 +220,7 @@ const PaymentManager = () => {
                     />
                 </div>
 
-                <button className="btn btn-primary">
-                    {editingId ? "Update" : "Add"}
-                </button>
+                <button className="btn btn-primary">Add</button>
             </form>
 
             <hr />
@@ -202,13 +234,14 @@ const PaymentManager = () => {
                     <th>Amount</th>
                     <th>Method</th>
                     <th>Scheduled Date</th>
-                    <th>Recurring</th>
+                    {/* <th>Recurring</th> */}
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {payments.map((p) => {
-                    const bill = bills.find((b) => b.id === p.billId);
+                    // 🔑 lookup from ALL bills so title is always available
+                    const bill = allBills.find((b) => b.id === p.billId);
                     const recurringFlag = bill?.isRecurring ?? bill?.recurring;
 
                     return (
@@ -218,15 +251,15 @@ const PaymentManager = () => {
                             <td>{p.amount}</td>
                             <td>{p.method}</td>
                             <td>{p.scheduledDate}</td>
-                            <td>
-                                {recurringFlag ? (
-                                    <span className="badge bg-info text-dark">
+                            {/* <td>
+                  {recurringFlag ? (
+                    <span className="badge bg-info text-dark">
                       🔄 {bill.frequency}
                     </span>
-                                ) : (
-                                    "One-time"
-                                )}
-                            </td>
+                  ) : (
+                    "One-time"
+                  )}
+                </td> */}
                             <td>
                                 <button
                                     className="btn btn-sm btn-warning me-1"

@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 
 const ScheduledPaymentManager = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const [bills, setBills] = useState([]);
     const [scheduledPayments, setScheduledPayments] = useState([]);
-    const [paymentMethods, setPaymentMethods] = useState([]); // ✅ store methods
+    const [paymentMethods, setPaymentMethods] = useState([]);
     const [formData, setFormData] = useState({
         id: null,
         billId: "",
         amount: "",
-        paymentMethod: "UPI", // ✅ default
-        scheduledDate: new Date().toISOString().split("T")[0], // default = today
+        paymentMethod: "UPI",
+        scheduledDate: new Date().toISOString().split("T")[0],
     });
     const [viewType, setViewType] = useState("all");
 
@@ -27,7 +27,7 @@ const ScheduledPaymentManager = () => {
     const fetchBills = async () => {
         try {
             const res = await axios.get(`http://localhost:9090/api/bills/${user.id}`);
-            setBills(res.data);
+            setBills(res.data || []);
         } catch (err) {
             console.error("Error fetching bills:", err);
         }
@@ -36,8 +36,7 @@ const ScheduledPaymentManager = () => {
     const fetchPaymentMethods = async () => {
         try {
             const res = await axios.get("http://localhost:9090/api/payment_methods");
-            // 🚫 filter out CASH
-            setPaymentMethods(res.data.filter((m) => m !== "CASH"));
+            setPaymentMethods((res.data || []).filter((m) => m !== "CASH"));
         } catch (err) {
             console.error("Error fetching payment methods:", err);
         }
@@ -59,14 +58,37 @@ const ScheduledPaymentManager = () => {
                     `http://localhost:9090/api/scheduled-payments/history/${user.id}`
                 );
             }
-            setScheduledPayments(res.data);
+            setScheduledPayments(res.data || []);
         } catch (err) {
             console.error("Error fetching scheduled payments:", err);
         }
     };
 
+    // Bills that are NOT fully paid (no paid scheduled payment for that bill)
+    const unpaidBills = useMemo(() => {
+        const paidSet = new Set(
+            (scheduledPayments || [])
+                .filter((sp) => sp.isPaid)
+                .map((sp) => sp.billId)
+        );
+        return (bills || []).filter((b) => !paidSet.has(b.id));
+    }, [bills, scheduledPayments]);
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    // Auto-fill amount/method/date on bill select
+    const handleBillSelect = (billId) => {
+        const selected = unpaidBills.find((b) => b.id === parseInt(billId, 10));
+        if (!selected) return;
+        setFormData((prev) => ({
+            ...prev,
+            billId,
+            amount: selected.amount ?? "",
+            paymentMethod: "UPI",
+            scheduledDate: selected.dueDate || new Date().toISOString().split("T")[0],
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -83,7 +105,7 @@ const ScheduledPaymentManager = () => {
                     userId: user.id,
                 });
             }
-            fetchScheduledPayments();
+            await fetchScheduledPayments();
             resetForm();
         } catch (err) {
             console.error("Error saving payment:", err);
@@ -104,22 +126,37 @@ const ScheduledPaymentManager = () => {
         if (!window.confirm("Are you sure you want to delete this payment?")) return;
         try {
             await axios.delete(`http://localhost:9090/api/scheduled-payments/${id}`);
-            fetchScheduledPayments();
+            await fetchScheduledPayments();
         } catch (err) {
             console.error("Error deleting payment:", err);
         }
     };
 
     const handleMarkAsPaid = async (id) => {
-        if (!window.confirm("Are you sure you want to mark this payment as paid?"))
+        if (!window.confirm("Are you sure you want to mark this payment as paid?")) {
             return;
+        }
         try {
             await axios.put(
                 `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
             );
-            fetchScheduledPayments();
+            await fetchScheduledPayments();
         } catch (err) {
             console.error("Error marking payment as paid:", err);
+        }
+    };
+
+    const handlePay = async (id) => {
+        if (!window.confirm("Are you sure you want to pay this bill now?")) {
+            return;
+        }
+        try {
+            await axios.put(
+                `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
+            );
+            await fetchScheduledPayments();
+        } catch (err) {
+            console.error("Error paying bill:", err);
         }
     };
 
@@ -128,7 +165,7 @@ const ScheduledPaymentManager = () => {
             id: null,
             billId: "",
             amount: "",
-            paymentMethod: "UPI", // ✅ reset to UPI
+            paymentMethod: "UPI",
             scheduledDate: new Date().toISOString().split("T")[0],
         });
     };
@@ -144,11 +181,11 @@ const ScheduledPaymentManager = () => {
                         className="form-select"
                         name="billId"
                         value={formData.billId}
-                        onChange={handleChange}
+                        onChange={(e) => handleBillSelect(e.target.value)}
                         required
                     >
-                        <option value="">-- select bill --</option>
-                        {bills.map((b) => (
+                        <option value="">Select Unpaid Bill</option>
+                        {unpaidBills.map((b) => (
                             <option key={b.id} value={b.id}>
                                 {b.title} (₹{b.amount})
                             </option>
@@ -217,25 +254,19 @@ const ScheduledPaymentManager = () => {
 
             <div className="btn-group mb-3">
                 <button
-                    className={`btn ${
-                        viewType === "all" ? "btn-secondary" : "btn-outline-secondary"
-                    }`}
+                    className={`btn ${viewType === "all" ? "btn-secondary" : "btn-outline-secondary"}`}
                     onClick={() => setViewType("all")}
                 >
                     All
                 </button>
                 <button
-                    className={`btn ${
-                        viewType === "upcoming" ? "btn-info" : "btn-outline-info"
-                    }`}
+                    className={`btn ${viewType === "upcoming" ? "btn-info" : "btn-outline-info"}`}
                     onClick={() => setViewType("upcoming")}
                 >
                     Upcoming
                 </button>
                 <button
-                    className={`btn ${
-                        viewType === "history" ? "btn-warning" : "btn-outline-warning"
-                    }`}
+                    className={`btn ${viewType === "history" ? "btn-warning" : "btn-outline-warning"}`}
                     onClick={() => setViewType("history")}
                 >
                     History
@@ -254,44 +285,53 @@ const ScheduledPaymentManager = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {scheduledPayments.map((sp) => (
-                    <tr key={sp.id}>
-                        <td>{sp.id}</td>
-                        <td>{bills.find((b) => b.id === sp.billId)?.title || sp.billId}</td>
-                        <td>₹{sp.amount}</td>
-                        <td>{sp.paymentMethod}</td>
-                        <td>{sp.scheduledDate}</td>
-                        <td>
-                            {!sp.isPaid && (
+                {scheduledPayments.map((sp) => {
+                    const billTitle = bills.find((b) => b.id === sp.billId)?.title || sp.billId;
+                    return (
+                        <tr key={sp.id}>
+                            <td>{sp.id}</td>
+                            <td>{billTitle}</td>
+                            <td>₹{sp.amount}</td>
+                            <td>{sp.paymentMethod}</td>
+                            <td>{sp.scheduledDate}</td>
+                            <td>
+                                {!sp.isPaid && (
+                                    <>
+                                        <button
+                                            className="btn btn-sm btn-info me-2"
+                                            onClick={() => handleEdit(sp)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-success me-2"
+                                            onClick={() => handlePay(sp.id)}
+                                        >
+                                            Pay
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-outline-success"
+                                            onClick={() => handleMarkAsPaid(sp.id)}
+                                        >
+                                            Mark as Paid
+                                        </button>
+                                    </>
+                                )}
+                                {sp.isPaid && (
+                                    <button className="btn btn-sm btn-success" disabled>
+                                        ✅ Paid
+                                    </button>
+                                )}
                                 <button
-                                    className="btn btn-sm btn-info me-2"
-                                    onClick={() => handleEdit(sp)}
+                                    className="btn btn-sm btn-danger ms-2"
+                                    onClick={() => handleDelete(sp.id)}
                                 >
-                                    Edit
+                                    Delete
                                 </button>
-                            )}
-                            <button
-                                className="btn btn-sm btn-danger"
-                                onClick={() => handleDelete(sp.id)}
-                            >
-                                Delete
-                            </button>
-                            {sp.isPaid && (
-                                <button className="btn btn-sm btn-success ms-2" disabled>
-                                    ✅ Paid
-                                </button>
-                            )}
-                            {!sp.isPaid && (
-                                <button
-                                    className="btn btn-sm btn-success ms-2"
-                                    onClick={() => handleMarkAsPaid(sp.id)}
-                                >
-                                    Mark as Paid
-                                </button>
-                            )}
-                        </td>
-                    </tr>
-                ))}
+                            </td>
+                        </tr>
+                    );
+                })}
                 </tbody>
             </table>
         </div>
