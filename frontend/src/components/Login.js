@@ -8,7 +8,8 @@ import "../styles/landing.css";
 import { Link } from "react-router-dom";
 
 
-const siteKey = "6LePCKorAAAAAIB80rWIGvPaey4EpxCDietAim_p";
+const siteKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+console.log(siteKey)
 
 const Login = () => {
     const navigate = useNavigate();
