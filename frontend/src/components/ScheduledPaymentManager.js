@@ -133,11 +133,12 @@ const ScheduledPaymentManager = () => {
         try {
             await axios.delete(`http://localhost:9090/api/scheduled-payments/${id}`);
             await fetchScheduledPayments();
+            console.log("Item deleted");
+            toast.success("Item deleted!");
         } catch (err) {
             console.error("Error deleting payment:", err);
+            toast.error("Delete failed");
         }
-        console.log("Item deleted");
-        toast.success("Item deleted!");
         },
         () => {
         console.log("Delete canceled");
@@ -151,19 +152,20 @@ const ScheduledPaymentManager = () => {
         "Are you sure you want to mark this payment as paid?",
         async() => {
         try {
-        await axios.put(
-            `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
-        );
-        await fetchScheduledPayments();
+            await axios.put(
+                `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
+            );
+            await fetchScheduledPayments();
+            console.log("Marked as paid");
+            toast.success("Marked as paid!");
         } catch (err) {
-        console.error("Error marking payment as paid:", err);
+            console.error("Error marking payment as paid:", err);
+            toast.error("Mark as paid failed");
         }
-        console.log("Marked as paid");
-        toast.success("Marked as paid!");
         },
         () => {
-        console.log("Marked as paid canceled");
-        toast.info("Action canceled");
+            console.log("Marked as paid canceled");
+            toast.info("Action canceled");
         }
     );
     };
