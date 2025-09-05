@@ -6,7 +6,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface BillRepository extends JpaRepository<Bill, Long> {
     @Query("SELECT b FROM Bill b WHERE TRIM(UPPER(b.category)) = TRIM(UPPER(:category))")
@@ -26,6 +28,15 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
             "AND TRIM(UPPER(b.category)) = TRIM(UPPER(:category)) " +
             "AND b.dueDate BETWEEN :startDate AND :endDate")
     List<Bill> findByUserIdAndCategoryAndDueDateBetween(Long userId, String category, LocalDate startDate, LocalDate endDate);
+
+    // Optional: only needed if your BillController insists on "deleteBillByComposite"
+    // Assumes Bill has fields: id, userId, paymentMethod, amount
+    @Modifying
+    @Transactional
+    int deleteByIdAndUserIdAndPaymentMethodAndAmount(Long id,
+                                                     Long userId,
+                                                     String paymentMethod,
+                                                     Double amount);
 
 
 

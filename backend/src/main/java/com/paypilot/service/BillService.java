@@ -7,6 +7,7 @@ import com.paypilot.repository.ReminderSettingRepository;
 import com.paypilot.repository.ScheduledPaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -91,14 +92,41 @@ public class BillService {
         }
     }
 
+    /**
+     * Delete a bill by ID, removing dependent rows first (Payments, ScheduledPayments), then the Bill.
+     * Transactional = all or nothing.
+     */
+    @Transactional
+    public void deleteBillById(Long billId) {
+        try {
+            // 1) direct payments referencing this bill
+            paymentRepository.deletePaymentByBillId(billId);
+            // 2) scheduled payments referencing this bill
+            scheduledPaymentRepository.deleteScheduledPaymentByBillId(billId);
+            // 3) the bill itself
+            billRepository.deleteById(billId);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete bill and related records for billId=" + billId, e);
+        }
+    }
+
+    /**
+     * Delete a bill by entity, removing dependents first.
+     */
+    @Transactional
     public void deleteBill(Bill bill){
-        try{
-            paymentRepository.deletePaymentByBillId(bill.getId());
-            scheduledPaymentRepository.deleteScheduledPaymentByBillId(bill.getId());
-            reminderSettingRepository.deleteReminderSettingByBillId(bill.getId());
+        if (bill == null || bill.getId() == null) {
+            throw new RuntimeException("Bill is null or has no id; cannot delete.");
+        }
+        Long billId = bill.getId();
+        try {
+            // dependents first
+            paymentRepository.deletePaymentByBillId(billId);
+            scheduledPaymentRepository.deleteScheduledPaymentByBillId(billId);
+            // then bill
             billRepository.delete(bill);
         } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to delete bill and related records for billId=" + billId, e);
         }
     }
 

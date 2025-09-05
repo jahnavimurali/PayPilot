@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/scheduled-payments")
+@CrossOrigin(origins = "*")
 public class ScheduledPaymentController {
 
     @Autowired
@@ -34,38 +35,55 @@ public class ScheduledPaymentController {
         return ResponseEntity.ok(scheduledPaymentService.getPaymentsByUserId(userId));
     }
 
-    @GetMapping("/upcoming")
-    public List<ScheduledPayment> getUpcomingPayments() {
-        return scheduledPaymentService.getUpcomingPayments();
+    @GetMapping("/upcoming/{userId}")
+    public ResponseEntity<List<ScheduledPayment>> getUpcomingPayments(@PathVariable Long userId) {
+        return ResponseEntity.ok(scheduledPaymentService.getUpcomingPayments(userId));
     }
 
-    @GetMapping("/history")
-    public List<ScheduledPayment> getPastPayments() {
-        return scheduledPaymentService.getPastPayments();
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<ScheduledPayment>> getPastPayments(@PathVariable Long userId) {
+        return ResponseEntity.ok(scheduledPaymentService.getPastPayments(userId));
     }
 
-    // PUT: Update payment
+    // PUT: Update scheduled payment
     @PutMapping("/{id}")
     public ResponseEntity<ScheduledPayment> updatePayment(@PathVariable Long id, @RequestBody ScheduledPayment updated) {
         ScheduledPayment payment = scheduledPaymentService.updatePayment(id, updated);
         return ResponseEntity.ok(payment);
     }
 
-    // DELETE: Delete payment
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePayment(@PathVariable Long id) {
-        scheduledPaymentService.deletePayment(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("markPaid/{id}")
-    public ResponseEntity<?> markScheduledPaymentAsPaid(@PathVariable Long id){
+    // PUT: Mark as paid
+    @PutMapping("/markPaid/{id}")
+    public ResponseEntity<?> markScheduledPaymentAsPaid(@PathVariable Long id) {
         try {
             scheduledPaymentService.setScheduledPaymentStatusPaid(id);
-            return ResponseEntity.ok("Scheduled Payment has been Paid");
+            return ResponseEntity.ok("Scheduled Payment has been paid.");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("An error Occurred !");
+            // server logs should have stack; return concise reason here
+            return ResponseEntity.badRequest().body("Failed to mark as paid: " + e.getMessage());
+        }
+    }
+
+    /**
+     * DELETE from Scheduled Payments: delete the ENTIRE bill everywhere.
+     * This will delete:
+     *  - all Payments for the bill
+     *  - all ScheduledPayments for the bill
+     *  - the Bill itself
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePayment(@PathVariable Long id) {
+        ScheduledPayment sp = scheduledPaymentService.getById(id);
+        if (sp == null) {
+            return ResponseEntity.status(404).body("Scheduled payment not found: id=" + id);
+        }
+
+        try {
+            // cascades: payments -> scheduled -> bill
+            scheduledPaymentService.deletePaymentAndBill(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body("Failed to delete bill and related records: " + e.getMessage());
         }
     }
 }
-

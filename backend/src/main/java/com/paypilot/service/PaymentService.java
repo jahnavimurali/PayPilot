@@ -42,7 +42,7 @@ public class PaymentService {
         return repo.findAll();
     }
     public List<Payment> getPaymentsByUserId(Long userId) {
-        return repo.findByUserId(userId);
+        return repo.findByUserIdOrderByScheduledDateAsc(userId);
     }
     public Payment updatePayment(Long id, Payment payment) {
         Payment existing = repo.findById(id).orElseThrow(() -> new RuntimeException("Payment not found"));

@@ -17,12 +17,22 @@ public class Payment {
 
     private Long userId;
 
+    @Column(columnDefinition = "NUMBER")
     private Double amount;
 
     private String method;
 
     @Temporal(TemporalType.DATE)
     private LocalDate scheduledDate;
+
+    public Payment(){}
+    public Payment(Long billId, Long userId, Double amount, String method, LocalDate scheduledDate) {
+        this.billId = billId;
+        this.userId = userId;
+        this.amount = amount;
+        this.method = method;
+        this.scheduledDate = scheduledDate;
+    }
 
     public Long getId() {
         return id;
