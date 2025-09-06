@@ -94,9 +94,9 @@ public class BillService {
     public void deleteBillById(Long billId) {
         try {
             // 1) direct payments referencing this bill
-            paymentRepository.deletePaymentByBillId(billId);
+            paymentRepository.deleteByBillId(billId);
             // 2) scheduled payments referencing this bill
-            scheduledPaymentRepository.deleteScheduledPaymentByBillId(billId);
+            scheduledPaymentRepository.deleteByBillId(billId);
             // 3) the bill itself
             billRepository.deleteById(billId);
         } catch (Exception e) {
@@ -115,8 +115,8 @@ public class BillService {
         Long billId = bill.getId();
         try {
             // dependents first
-            paymentRepository.deletePaymentByBillId(billId);
-            scheduledPaymentRepository.deleteScheduledPaymentByBillId(billId);
+            paymentRepository.deleteByBillId(billId);
+            scheduledPaymentRepository.deleteByBillId(billId);
             // then bill
             billRepository.delete(bill);
         } catch (RuntimeException e) {

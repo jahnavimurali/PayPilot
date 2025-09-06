@@ -53,8 +53,7 @@ public interface ScheduledPaymentRepository extends JpaRepository<ScheduledPayme
     Object[] getOverdueAndUpcomingCounts(@Param("userId") Long userId,
                                          @Param("reminderDate") LocalDate reminderDate);
 
-    @Query("DELETE FROM ScheduledPayment sp WHERE sp.billId = :billId")
-    void deleteScheduledPaymentByBillId(Long billId);
+       void deleteByBillId(Long billId);
 
     List<ScheduledPayment> findByScheduledDate(LocalDate scheduledDate);
 
@@ -67,10 +66,6 @@ public interface ScheduledPaymentRepository extends JpaRepository<ScheduledPayme
             String paymentMethod,
             LocalDate scheduledDate
     );
-
-
-
-
 
 }
 
