@@ -171,17 +171,26 @@ const ScheduledPaymentManager = () => {
     };
 
     const handlePay = async (id) => {
-        if (!window.confirm("Are you sure you want to pay this bill now?")) {
-            return;
-        }
+        ConfirmToast(
+        "Are you sure you want to pay this bill now?",
+        async() => {
         try {
             await axios.put(
                 `http://localhost:9090/api/scheduled-payments/markPaid/${id}`
             );
             await fetchScheduledPayments();
+            console.log("Bill paid");
+            toast.success("Bill paid!");
         } catch (err) {
-            console.error("Error paying bill:", err);
+            console.error("Error in making payment:", err);
+            toast.error("Bill payment failed");
         }
+        },
+        () => {
+            console.log("Paid canceled");
+            toast.info("Action canceled");
+        }
+    );
     };
 
     const resetForm = () => {

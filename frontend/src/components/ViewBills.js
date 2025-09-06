@@ -4,7 +4,7 @@ import axios from "axios";
 const ViewBills = () => {
     const [userId, setUserId] = useState(null);
     const [allBills, setAllBills] = useState([]);
-    const [schedPays, setSchedPays] = useState([]); // Scheduled payments for status
+    // const [schedPays, setSchedPays] = useState([]); // Scheduled payments for status
     const [filter, setFilter] = useState("ALL");    // ALL | UNPAID | PAID
     const [loading, setLoading] = useState(true);
 
@@ -18,14 +18,14 @@ const ViewBills = () => {
         (async () => {
             try {
                 setLoading(true);
-                const [billsRes, schedRes] = await Promise.all([
+                const [billsRes] = await Promise.all([
                     axios.get(`http://localhost:9090/api/bills/${userId}`),
-                    axios.get(`http://localhost:9090/api/scheduled-payments/user/${userId}`),
+                    // axios.get(`http://localhost:9090/api/scheduled-payments/user/${userId}`),
                 ]);
                 // keep CASH bills out if you don’t want them
                 const bills = (billsRes.data || []).filter(b => b.paymentMethod !== "CASH");
                 setAllBills(bills);
-                setSchedPays(schedRes.data || []);
+                // setSchedPays(schedRes.data || []);
             } catch (e) {
                 console.error("Fetch error:", e);
             } finally {
@@ -35,23 +35,23 @@ const ViewBills = () => {
     }, [userId]);
 
     // Build a quick lookup: billId -> isPaid (true if any scheduled payment for that bill is marked paid)
-    const isPaidMap = useMemo(() => {
-        const map = new Map();
-        for (const sp of schedPays) {
-            if (sp?.billId == null) continue;
-            const paid = Boolean(sp?.isPaid);
-            // if any scheduled payment for this bill is paid, treat the bill as paid
-            map.set(sp.billId, (map.get(sp.billId) || false) || paid);
-        }
-        return map;
-    }, [schedPays]);
+    // const isPaidMap = useMemo(() => {
+    //     const map = new Map();
+    //     for (const sp of schedPays) {
+    //         if (sp?.billId == null) continue;
+    //         const paid = Boolean(sp?.isPaid);
+    //         // if any scheduled payment for this bill is paid, treat the bill as paid
+    //         map.set(sp.billId, (map.get(sp.billId) || false) || paid);
+    //     }
+    //     return map;
+    // }, [schedPays]);
 
     const filteredBills = useMemo(() => {
         if (filter === "ALL") return allBills;
-        if (filter === "PAID") return allBills.filter(b => Boolean(isPaidMap.get(b.id)));
+        if (filter === "PAID") return allBills.filter(b => Boolean(b.isPaid));
         // UNPAID
-        return allBills.filter(b => !Boolean(isPaidMap.get(b.id)));
-    }, [filter, allBills, isPaidMap]);
+        return allBills.filter(b => !Boolean(b.isPaid));
+    }, [filter, allBills]);
 
     const handleDownload = async (billTitle, billId) => {
         try {
@@ -108,7 +108,7 @@ const ViewBills = () => {
                     <tbody>
                     {filteredBills.map((bill) => {
                         const autoPayFlag = bill.autoPayEnabled ?? bill.isAutoPayEnabled;
-                        const paid = Boolean(isPaidMap.get(bill.id));
+                        const paid = Boolean(bill.isPaid);
 
                         return (
                             <tr key={bill.id}>
