@@ -149,7 +149,7 @@ public class Bill {
         this.frequency = frequency;
     }
 
-    public Boolean isPaid() {
+    public Boolean getIsPaid() {
         return isPaid;
     }
 

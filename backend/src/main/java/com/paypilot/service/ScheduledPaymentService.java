@@ -113,6 +113,9 @@ public class ScheduledPaymentService {
         Bill bill = billService.getBillById(sp.getBillId());
         if (bill == null) return;
 
+        //mark bill as paid
+        billService.payBill(bill);
+
         Frequency freq = bill.getFrequency(); // enum
         if (freq == null || freq == Frequency.ONCE) {
             // one-time bill -> nothing more to schedule

@@ -71,7 +71,7 @@ public class BillService {
             original.setDueDate(bill.getDueDate());
             original.setRecurring(bill.isRecurring());
             original.setFrequency(bill.getFrequency());
-            original.setPaid(bill.isPaid());
+            original.setPaid(bill.getIsPaid());
             original.setSnoozeReminders(bill.isSnoozeReminders());
 
             // Preserve the incoming nextDueDate (don’t blindly overwrite with dueDate)
@@ -83,6 +83,17 @@ public class BillService {
             return billRepository.save(original);
         } catch (Exception e) {
             throw new RuntimeException("Failed to update bill with id: " + billId, e);
+        }
+    }
+
+    public void payBill(Bill bill){
+        Long id = bill.getId();
+        try {
+            Bill original = getBillById(id);
+            original.setPaid(true);
+            billRepository.save(original);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to pay bill with id: " + id, e);
         }
     }
 
