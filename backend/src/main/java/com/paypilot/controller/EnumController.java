@@ -1,7 +1,6 @@
 package com.paypilot.controller;
 
 import com.paypilot.model.Category;
-import com.paypilot.model.Frequency;
 import com.paypilot.model.PaymentMethod;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +13,6 @@ public class EnumController {
     public Category[] getCategories() {
         System.out.println("Categories fetched");
         return Category.values();
-    }
-
-    @GetMapping("/api/frequencies")
-    public Frequency[] getFrequencies() {
-        System.out.println("frequency fetched");
-        return Frequency.values();
     }
 
     @GetMapping("/api/payment_methods")

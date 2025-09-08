@@ -3,7 +3,6 @@ package com.paypilot.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "payments")

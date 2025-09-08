@@ -47,7 +47,7 @@ const PaymentManager = () => {
                         <th>Bill</th>
                         <th>Amount</th>
                         <th>Method</th>
-                        <th>Scheduled Date</th>
+                        <th>Payment Date</th>
                     </tr>
                     </thead>
                     <tbody>

@@ -69,15 +69,7 @@ public class BillService {
             original.setAmount(bill.getAmount());
             original.setCategory(bill.getCategory());
             original.setDueDate(bill.getDueDate());
-            original.setRecurring(bill.isRecurring());
-            original.setFrequency(bill.getFrequency());
             original.setPaid(bill.getIsPaid());
-            original.setSnoozeReminders(bill.isSnoozeReminders());
-
-            // Preserve the incoming nextDueDate (don’t blindly overwrite with dueDate)
-            if (bill.getNextDueDate() != null) {
-                original.setNextDueDate(bill.getNextDueDate());
-            }
 
             // ✅ Persist changes to DB
             return billRepository.save(original);
