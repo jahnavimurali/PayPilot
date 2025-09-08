@@ -123,6 +123,7 @@ const AddBill = () => {
                         type="number"
                         className="form-control"
                         name="amount"
+						min="1"
                         value={billData.amount}
                         onChange={handleChange}
                         required
