@@ -66,21 +66,19 @@ const ScheduledPaymentManager = () => {
         }
     };
 
-    // Bills that are NOT fully paid (no paid scheduled payment for that bill)
+    // Bills that are NOT paid (no paid scheduled payment for that bill)
     const unpaidBills = useMemo(() => {
-		{/*
-			const paidSet = new Set(
-			            (scheduledPayments || [])
-			                .filter((sp) => sp.isPaid)
-			                .map((sp) => sp.billId)
-			        );
-		*/}
-		const paidSet = new Set(
-		            (scheduledPayments || []).map((sp) => sp.billId)
-		        );
-		console.log("\n\nUnpaid Bills to be displayed: - \n\n"+paidSet.values());
-        return (bills || []).filter((b) => !paidSet.has(b.id));
-    }, [bills, scheduledPayments]);
+        const paidSet = new Set((scheduledPayments || []).map((sp) => sp.billId));
+
+        return (bills || []).filter((b) => {
+            // if editing, always include the current bill
+            if (formData.id && b.id === parseInt(formData.billId, 10)) {
+                return true;
+            }
+            return !paidSet.has(b.id);
+        });
+    }, [bills, scheduledPayments, formData]);
+
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -223,7 +221,7 @@ const ScheduledPaymentManager = () => {
                         onChange={(e) => handleBillSelect(e.target.value)}
                         required
                     >
-                        <option value="">Select Unpaid Bill</option>
+                        <option value="">Select Bill</option>
                         {unpaidBills.map((b) => (
                             <option key={b.id} value={b.id}>
                                 {b.title} (₹{b.amount})

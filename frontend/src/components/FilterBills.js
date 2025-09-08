@@ -30,37 +30,39 @@ const FilterBills = () => {
     const [filteredBills, setFilteredBills] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch all bills once on mount
+    const [categories, setCategories] = useState([]);
+
+    // Fetch bills + categories once on mount
     useEffect(() => {
-        const fetchBills = async () => {
+        const fetchData = async () => {
             try {
-                const res = await axios.get(
-                    `http://localhost:9090/api/bills/${userId}`
-                );
-                setAllBills(res.data);
-                setFilteredBills(res.data); // initially show all
+                const [billsRes, categoriesRes] = await Promise.all([
+                    axios.get(`http://localhost:9090/api/bills/${userId}`),
+                    axios.get("http://localhost:9090/api/categories"),
+                ]);
+                setAllBills(billsRes.data);
+                setFilteredBills(billsRes.data);
+                setCategories(categoriesRes.data);
             } catch (err) {
-                console.error("Error fetching bills:", err);
-                alert("Error fetching bills.");
+                console.error("Error fetching data:", err);
+                alert("Error fetching bills or categories.");
             } finally {
                 setLoading(false);
             }
         };
-        fetchBills();
+        fetchData();
     }, [userId]);
 
     // Filter bills whenever category/date changes
     useEffect(() => {
         let filtered = [...allBills];
 
-        // Category filter
         if (category.trim()) {
-            filtered = filtered.filter((bill) =>
-                bill.category?.toLowerCase().includes(category.toLowerCase())
+            filtered = filtered.filter(
+                (bill) => bill.category === category
             );
         }
 
-        // Date filters
         if (fromDate) {
             filtered = filtered.filter(
                 (bill) => bill.dueDate && bill.dueDate >= fromDate
@@ -72,7 +74,6 @@ const FilterBills = () => {
             );
         }
 
-        // Sort by dueDate (ascending)
         filtered.sort((a, b) =>
             a.dueDate && b.dueDate ? a.dueDate.localeCompare(b.dueDate) : 0
         );
@@ -99,13 +100,18 @@ const FilterBills = () => {
             <div className="row mb-3">
                 <div className="col-md-4">
                     <label>Bill Category</label>
-                    <input
-                        type="text"
-                        placeholder="e.g. Rent, Groceries, Internet"
+                    <select
                         className="form-control"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                    />
+                    >
+                        <option value="">All Categories</option>
+                        {categories.map((cat) => (
+                            <option key={cat} value={cat}>
+                                {cat}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="col-md-3">
                     <label>From</label>
