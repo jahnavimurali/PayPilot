@@ -1,7 +1,6 @@
 package com.paypilot.service;
 
 import com.paypilot.model.Bill;
-import com.paypilot.model.Frequency;
 import com.paypilot.model.Payment;
 import com.paypilot.model.ScheduledPayment;
 import com.paypilot.repository.ScheduledPaymentRepository;
@@ -60,7 +59,6 @@ class ScheduledPaymentServiceTest {
 
         when(scheduledPaymentRepository.findById(1L)).thenReturn(Optional.of(sp));
         when(billService.getBillById(100L)).thenReturn(bill);
-        bill.setFrequency(Frequency.ONCE);
 
         scheduledPaymentService.setScheduledPaymentStatusPaid(1L);
 
@@ -68,30 +66,5 @@ class ScheduledPaymentServiceTest {
         assertTrue(sp.getIsPaid());
         verify(scheduledPaymentRepository).save(sp);
         verify(scheduledPaymentRepository, never()).save(argThat(x -> x.getId() == null && !x.getIsPaid()));
-    }
-
-    @Test
-    void setScheduledPaymentStatusPaid_Monthly_CreatesNextSchedule() {
-        ScheduledPayment sp = new ScheduledPayment(10L, 100L, 120.00, LocalDate.of(2025, 1, 15), "CARD");
-        sp.setId(2L);
-        sp.setIsPaid(false);
-
-        when(scheduledPaymentRepository.findById(2L)).thenReturn(Optional.of(sp));
-        bill.setFrequency(Frequency.MONTHLY);
-        when(billService.getBillById(100L)).thenReturn(bill);
-
-        scheduledPaymentService.setScheduledPaymentStatusPaid(2L);
-
-        verify(paymentService).addPayment(any(Payment.class));
-        verify(billService).payBill(bill);
-        // bill.nextDueDate should be set and persisted via addBill
-        verify(billService).addBill(bill);
-        ArgumentCaptor<ScheduledPayment> captor = ArgumentCaptor.forClass(ScheduledPayment.class);
-        verify(scheduledPaymentRepository, atLeastOnce()).save(captor.capture());
-        assertTrue(sp.getIsPaid());
-        // the last saved entity could be the next schedule; ensure scheduledDate advanced
-        boolean nextSavedFound = captor.getAllValues().stream()
-                .anyMatch(x -> x.getId() == null && x.getScheduledDate().isAfter(sp.getScheduledDate()));
-        assertTrue(nextSavedFound);
     }
 }

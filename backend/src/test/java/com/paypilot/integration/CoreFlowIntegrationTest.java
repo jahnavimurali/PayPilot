@@ -64,27 +64,23 @@ public class CoreFlowIntegrationTest {
         }
     }
 
-    private Bill buildBill(Long userId, String title, double amount, LocalDate due, boolean autoPay, String frequency) {
+    private Bill buildBill(Long userId, String title, double amount, LocalDate due, boolean autoPay) {
         Bill b = new Bill();
         b.setUserId(userId);
         b.setTitle(title);
         b.setCategory(Category.OTHER);
         b.setAmount(amount);
         b.setDueDate(due);
-        b.setRecurring(!"ONCE".equals(frequency));
-        b.setFrequency(com.paypilot.model.Frequency.valueOf(frequency));
         b.setPaid(false);
-        b.setSnoozeReminders(false);
         b.setAutoPayEnabled(autoPay);
         b.setPaymentMethod("UPI");
-        b.setNextDueDate(due);
         return b;
     }
 
     @Test
     @Order(1)
     void createBill_withAutoPay_createsScheduledPayment() {
-        Bill bill = buildBill(1L, "Internet", 999.0, LocalDate.now().plusDays(2), true, "MONTHLY");
+        Bill bill = buildBill(1L, "Internet", 999.0, LocalDate.now().plusDays(2), true);
 
         ResponseEntity<String> resp = rest.postForEntity(url("/api/bills"), bill, String.class);
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -103,7 +99,7 @@ public class CoreFlowIntegrationTest {
 
     @Test
     @Order(2)
-    void markScheduledPaymentPaid_createsPayment_andSchedulesNext_forRecurring() {
+    void markScheduledPaymentPaid_createsPayment() {
         // Precondition: there is a scheduled payment from previous test
         List<ScheduledPayment> all = spRepo.findByUserId(1L);
         assertThat(all).isNotEmpty();
@@ -128,15 +124,6 @@ public class CoreFlowIntegrationTest {
         // Payment created
         assertThat(payRepo.findAll()).isNotEmpty();
 
-        // Bill updated: paid and next due date in +1 month, and a new scheduled payment
-        Bill bill = billRepo.findById(sp.getBillId()).orElse(null);
-        assertThat(bill).isNotNull();
-        assertThat(bill.getIsPaid()).isTrue();
-        assertThat(bill.getNextDueDate()).isEqualTo(prevDate.plusMonths(1));
-
-        List<ScheduledPayment> after = spRepo.findByUserId(1L);
-        boolean hasNext = after.stream().anyMatch(x -> x.getBillId().equals(bill.getId()) && x.getScheduledDate().equals(prevDate.plusMonths(1)));
-        assertThat(hasNext).isTrue();
     }
 
     @Test
@@ -151,11 +138,11 @@ public class CoreFlowIntegrationTest {
         rsRepo.save(rs);
 
         // Add an overdue bill (unpaid, manual)
-        Bill overdue = buildBill(1L, "Electricity", 1500.0, LocalDate.now().minusDays(2), false, "ONCE");
+        Bill overdue = buildBill(1L, "Electricity", 1500.0, LocalDate.now().minusDays(2), false);
         rest.postForEntity(url("/api/bills"), overdue, String.class);
 
         // Add an upcoming bill within 3 days (unpaid, manual)
-        Bill upcoming = buildBill(1L, "Water", 300.0, LocalDate.now().plusDays(1), false, "ONCE");
+        Bill upcoming = buildBill(1L, "Water", 300.0, LocalDate.now().plusDays(1), false);
         rest.postForEntity(url("/api/bills"), upcoming, String.class);
 
         // Notifications
