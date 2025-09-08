@@ -341,6 +341,12 @@ const ScheduledPaymentManager = () => {
                                             Edit
                                         </button>
                                         <button
+                                            className="btn btn-sm btn-success me-2"
+                                            onClick={() => handlePay(sp.id)}
+                                        >
+                                            Pay
+                                        </button>
+                                        <button
                                             className="btn btn-sm btn-outline-success"
                                             onClick={() => handleMarkAsPaid(sp.id)}
                                         >
