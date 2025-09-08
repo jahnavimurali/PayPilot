@@ -26,12 +26,6 @@ public class Bill {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    @Convert(converter = BooleanToYNConverter.class)
-    private Boolean isRecurring = false;
-
-    @Enumerated(EnumType.STRING)
-    private Frequency frequency = Frequency.ONCE;
 
     @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
     @Convert(converter = BooleanToYNConverter.class)
@@ -39,32 +33,25 @@ public class Bill {
 
     @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
     @Convert(converter = BooleanToYNConverter.class)
-    private Boolean snoozeReminders = false;
-
-    @Column(nullable = false, columnDefinition = "CHAR(1) DEFAULT 'N'")
-    @Convert(converter = BooleanToYNConverter.class)
     private Boolean autoPayEnabled = false;
 
-    private LocalDate nextDueDate;
 
     private String paymentMethod = String.valueOf(PaymentMethod.UPI);
 
     public Bill(){
 
     }
-    public Bill(String title, Category category, double amount, LocalDate dueDate, Long userId, Boolean isRecurring, Frequency frequency, Boolean isPaid, Boolean snoozeReminders, Boolean autoPayEnabled, String paymentMethod) {
+
+    public Bill(String title, Category category, double amount, LocalDate dueDate, Long userId, Boolean isPaid, Boolean autoPayEnabled, String paymentMethod){
         this.title = title;
         this.category = category;
         this.amount = amount;
         this.dueDate = dueDate;
         this.userId = userId;
-        this.isRecurring = isRecurring;
-        this.frequency = frequency;
         this.isPaid = isPaid;
-        this.snoozeReminders = snoozeReminders;
         this.autoPayEnabled = autoPayEnabled;
         this.paymentMethod = paymentMethod;
-        this.nextDueDate = dueDate;
+
     }
 
     // getters & setters...
@@ -132,44 +119,11 @@ public class Bill {
         this.userId = userId;
     }
 
-    public Boolean isRecurring() {
-        return isRecurring;
-    }
-
-
-    public void setRecurring(Boolean recurring) {
-        isRecurring = recurring;
-    }
-
-    public Frequency getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(Frequency frequency) {
-        this.frequency = frequency;
-    }
-
     public Boolean getIsPaid() {
         return isPaid;
     }
 
     public void setPaid(Boolean paid) {
         this.isPaid = paid;
-    }
-
-    public Boolean isSnoozeReminders() {
-        return snoozeReminders;
-    }
-
-    public void setSnoozeReminders(Boolean snoozeReminders) {
-        this.snoozeReminders = snoozeReminders;
-    }
-
-    public LocalDate getNextDueDate() {
-        return nextDueDate;
-    }
-
-    public void setNextDueDate(LocalDate nextDueDate) {
-        this.nextDueDate = nextDueDate;
     }
 }

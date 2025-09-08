@@ -1,7 +1,6 @@
 package com.paypilot.service;
 
 import com.paypilot.model.Bill;
-import com.paypilot.model.Frequency;           // <-- enum
 import com.paypilot.model.Payment;
 import com.paypilot.model.ScheduledPayment;
 import com.paypilot.repository.ScheduledPaymentRepository;
@@ -116,44 +115,6 @@ public class ScheduledPaymentService {
         //mark bill as paid
         billService.payBill(bill);
 
-        Frequency freq = bill.getFrequency(); // enum
-        if (freq == null || freq == Frequency.ONCE) {
-            // one-time bill -> nothing more to schedule
-            return;
-        }
-
-        // Compute the next due date from bill.nextDueDate if present, otherwise from this schedule date
-        LocalDate base = (bill.getNextDueDate() != null) ? bill.getNextDueDate() : sp.getScheduledDate();
-        LocalDate nextDate = computeNextDate(base, freq);
-
-        // persist updated next due date on the bill
-        bill.setNextDueDate(nextDate);
-        billService.addBill(bill);
-
-        // create & persist the next schedule
-        ScheduledPayment next = new ScheduledPayment(
-                sp.getUserId(),
-                sp.getBillId(),
-                sp.getAmount(),
-                nextDate,
-                sp.getPaymentMethod()
-        );
-        scheduledPaymentRepository.save(next);
-    }
-
-    /** helper: roll the base date forward by the enum frequency. */
-    private LocalDate computeNextDate(LocalDate base, Frequency freq) {
-        switch (freq) {
-            case WEEKLY:
-                return base.plusWeeks(1);
-            case MONTHLY:
-                return base.plusMonths(1);
-            case YEARLY:
-                return base.plusYears(1);
-            default:
-                // ONCE or unknown -> return base (caller guards ONCE)
-                return base;
-        }
     }
 
     /** Update an existing scheduled payment. */

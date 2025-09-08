@@ -8,25 +8,18 @@ const AddBill = () => {
         amount: "", // ✅ keep as string for stable input
         dueDate: "",
         userId: JSON.parse(localStorage.getItem("user"))?.id || null,
-        isRecurring: false,
-        frequency: "ONCE", // ✅ match backend enum
         isPaid: false,
-        snoozeReminders: false,
         autoPayEnabled: false,
         paymentMethod: "UPI",
     });
 
     const [successMessage, setSuccessMessage] = useState("");
     const [categories, setCategories] = useState([]);
-    const [frequencies, setFrequencies] = useState([]);
     const [paymentMethods, setPaymentMethods] = useState([]);
 
     useEffect(() => {
         axios.get("http://localhost:9090/api/categories").then((res) => {
             setCategories(res.data);
-        });
-        axios.get("http://localhost:9090/api/frequencies").then((res) => {
-            setFrequencies(res.data);
         });
         axios.get("http://localhost:9090/api/payment_methods").then((res) => {
             setPaymentMethods(res.data);
@@ -37,7 +30,7 @@ const AddBill = () => {
         const { name, value, type, checked } = e.target;
         setBillData({
             ...billData,
-            [name]: type === "checkbox" ? checked : value, // ✅ don’t cast here
+            [name]: type === "checkbox" ? checked : value,
         });
     };
 
@@ -61,10 +54,7 @@ const AddBill = () => {
                 category: "",
                 amount: "",
                 dueDate: "",
-                isRecurring: false,
-                frequency: "ONCE",
                 isPaid: false,
-                snoozeReminders: false,
                 autoPayEnabled: false,
                 paymentMethod: "UPI",
             });
@@ -170,39 +160,6 @@ const AddBill = () => {
                     />
                     <label className="form-check-label">Enable Auto-Pay ?</label>
                 </div>
-
-				{/* 
-                {billData.autoPayEnabled && (
-                    <div className="mb-3 form-check">
-                        <input
-                            type="checkbox"
-                            className="form-check-input"
-                            name="isRecurring"
-                            checked={billData.isRecurring}
-                            onChange={handleChange}
-                        />
-                        <label className="form-check-label">Is this a recurring bill?</label>
-                    </div>
-                )}
-
-                {billData.isRecurring && (
-                    <div className="mb-3">
-                        <label>Frequency</label>
-                        <select
-                            className="form-control"
-                            name="frequency"
-                            value={billData.frequency}
-                            onChange={handleChange}
-                        >
-                            {frequencies.map((freq) => (
-                                <option className="form-control" key={freq} value={freq}>
-                                    {freq}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
-				*/}
 
                 <button type="submit" className="btn btn-success">
                     ➕ Add Bill
