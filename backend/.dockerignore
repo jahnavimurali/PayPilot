@@ -1,0 +1,17 @@
+# Ignore everything not needed for building the jar
+**/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/target
+**/test-output
+**/logs
+
+# Maven caches and wrappers
+**/.mvn/
+**/mvnw*
+**/.m2/
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
