@@ -22,7 +22,7 @@ class EmailServiceTest {
 
     @Test
     void send_DelegatesToMailSender() {
-        emailService.send("to@example.com", "Subject", "Body");
+        emailService.send("jahnavim3110@gmail.com", "Subject", "Body");
         verify(javaMailSender).send(any(SimpleMailMessage.class));
     }
 }
