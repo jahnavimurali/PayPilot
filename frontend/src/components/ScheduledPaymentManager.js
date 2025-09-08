@@ -317,7 +317,7 @@ const ScheduledPaymentManager = () => {
                     <th>Bill</th>
                     <th>Amount</th>
                     <th>Method</th>
-                    <th>Date</th>
+                    <th>Scheduled Date</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -339,12 +339,6 @@ const ScheduledPaymentManager = () => {
                                             onClick={() => handleEdit(sp)}
                                         >
                                             Edit
-                                        </button>
-                                        <button
-                                            className="btn btn-sm btn-success me-2"
-                                            onClick={() => handlePay(sp.id)}
-                                        >
-                                            Pay
                                         </button>
                                         <button
                                             className="btn btn-sm btn-outline-success"
